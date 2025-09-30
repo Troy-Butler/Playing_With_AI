@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .calculator {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .display-container {
+            width: 100%;
+            height: 80px;
+            background: #2c3e50;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+        }
+
+        .operator-display {
+            width: 60px;
+            height: 100%;
+            background: #2c3e50;
+            border-radius: 10px 0 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: #ecf0f1;
+            font-family: 'Courier New', monospace;
+            border-right: 2px solid #34495e;
+        }
+
+        .display {
+            flex: 1;
+            height: 100%;
+            font-size: 2em;
+            text-align: right;
+            border: none;
+            background: transparent;
+            color: white;
+            border-radius: 0 10px 10px 0;
+            padding: 0 20px;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        .display:focus {
+            outline: none;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+
+        .bottom-row {
+            grid-column: span 3;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .btn {
+            height: 70px;
+            font-size: 1.4em;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .number {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .number:hover {
+            background: #d5dbdb;
+        }
+
+        .operator {
+            background: #3498db;
+            color: white;
+        }
+
+        .operator:hover {
+            background: #2980b9;
+        }
+
+        .equals {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .equals:hover {
+            background: #c0392b;
+        }
+
+        .clear {
+            background: #f39c12;
+            color: white;
+        }
+
+        .clear:hover {
+            background: #e67e22;
+        }
+
+        .function {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .function:hover {
+            background: #8e44ad;
+        }
+
+        .backspace {
+            background: #34495e;
+            color: white;
+        }
+
+        .backspace:hover {
+            background: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display-container">
+            <div class="operator-display" id="operatorDisplay"></div>
+            <input type="text" class="display" id="display" readonly>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn clear" onclick="clearAll()">C</button>
+            <button class="btn clear" onclick="clearEntry()">CE</button>
+            <button class="btn backspace" onclick="backspace()">⌫</button>
+            <button class="btn function" onclick="square()">x²</button>
+            <button class="btn function" onclick="squareRoot()">√x</button>
+            
+            <button class="btn number" onclick="insertNumber('7')">7</button>
+            <button class="btn number" onclick="insertNumber('8')">8</button>
+            <button class="btn number" onclick="insertNumber('9')">9</button>
+            <button class="btn function" onclick="setPowerOperator()">y<sup>x</sup></button>
+            <button class="btn function" onclick="insertPi()">π</button>
+            
+            <button class="btn number" onclick="insertNumber('4')">4</button>
+            <button class="btn number" onclick="insertNumber('5')">5</button>
+            <button class="btn number" onclick="insertNumber('6')">6</button>
+            <button class="btn operator" onclick="setOperator('*')">×</button>
+            <button class="btn operator" onclick="setOperator('/')">÷</button>
+            
+            <button class="btn number" onclick="insertNumber('1')">1</button>
+            <button class="btn number" onclick="insertNumber('2')">2</button>
+            <button class="btn number" onclick="insertNumber('3')">3</button>
+            <button class="btn operator" onclick="setOperator('+')">+</button>
+            <button class="btn operator" onclick="setOperator('-')">-</button>
+            
+            <div class="bottom-row">
+                <button class="btn number" onclick="insertNumber('0')">0</button>
+                <button class="btn number" onclick="toggleSign()">±</button>
+                <button class="btn number" onclick="insertNumber('.')">.</button>
+            </div>
+            <button class="btn function" onclick="percent()">%</button>
+            <button class="btn equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let operatorDisplay = document.getElementById('operatorDisplay');
+        let expression = [];  // Store tokens as they're entered
+        let currentNumber = '0';
+        let waitingForNewNumber = false;
+
+        // Operator precedence and associativity
+        const operators = {
+            '+': { precedence: 1, associativity: 'left' },
+            '-': { precedence: 1, associativity: 'left' },
+            '*': { precedence: 2, associativity: 'left' },
+            '/': { precedence: 2, associativity: 'left' },
+            '^': { precedence: 3, associativity: 'right' }
+        };
+
+        function insertNumber(num) {
+            if (waitingForNewNumber || currentNumber === '0') {
+                currentNumber = num;
+                waitingForNewNumber = false;
+            } else {
+                currentNumber += num;
+            }
+            updateDisplay();
+            clearOperatorDisplay();
+        }
+
+        function setOperator(op) {
+            // Add current number to expression if we have one
+            if (currentNumber !== '') {
+                expression.push(parseFloat(currentNumber));
+            }
+            
+            // Check if we should show intermediate result
+            if (expression.length >= 3 && shouldShowIntermediateResult(op)) {
+                // Calculate and display intermediate result
+                const postfix = infixToPostfix(expression.slice());
+                const result = evaluatePostfix(postfix);
+                
+                if (result !== 'Error') {
+                    currentNumber = result.toString();
+                    updateDisplay();
+                    // Reset expression with the result
+                    expression = [result];
+                }
+            }
+            
+            // Add operator to expression
+            expression.push(op);
+            
+            // Show operator in display
+            let displaySymbol = op;
+            if (op === '*') displaySymbol = '×';
+            if (op === '/') displaySymbol = '÷';
+            operatorDisplay.textContent = displaySymbol;
+            
+            waitingForNewNumber = true;
+        }
+
+        function shouldShowIntermediateResult(newOp) {
+            // Show intermediate result when entering an operator that should cause
+            // evaluation due to precedence rules (higher or equal precedence)
+            
+            if (expression.length < 2) return false;
+            
+            // Get the last operator in the expression
+            let lastOperator = null;
+            for (let i = expression.length - 1; i >= 0; i--) {
+                if (typeof expression[i] === 'string' && operators[expression[i]]) {
+                    lastOperator = expression[i];
+                    break;
+                }
+            }
+            
+            if (!lastOperator) return false;
+            
+            // Check if any existing operator has higher OR EQUAL precedence than the new one
+            // This handles both higher precedence (6÷2+1) and equal precedence (2÷5×20) cases
+            const newPrecedence = operators[newOp].precedence;
+            
+            for (let i = 0; i < expression.length; i++) {
+                if (typeof expression[i] === 'string' && operators[expression[i]]) {
+                    if (operators[expression[i]].precedence >= newPrecedence) {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+
+        function setPowerOperator() {
+            setOperator('^');
+        }
+
+        function calculate() {
+            // Add final number to expression
+            if (currentNumber !== '') {
+                expression.push(parseFloat(currentNumber));
+            }
+            
+            if (expression.length === 0) return;
+            
+            // Convert infix to postfix using Shunting Yard algorithm
+            const postfix = infixToPostfix(expression.slice());
+            
+            // Evaluate postfix expression
+            const result = evaluatePostfix(postfix);
+            
+            if (result === 'Error') {
+                currentNumber = 'Error';
+            } else {
+                currentNumber = result.toString();
+            }
+            
+            updateDisplay();
+            clearOperatorDisplay();
+            
+            // Reset for next calculation
+            expression = [];
+            waitingForNewNumber = true;
+        }
+
+        // Shunting Yard Algorithm: Convert infix to postfix notation
+        function infixToPostfix(tokens) {
+            const output = [];
+            const operatorStack = [];
+            
+            for (let token of tokens) {
+                if (typeof token === 'number') {
+                    // Numbers go directly to output
+                    output.push(token);
+                } else if (token === '(') {
+                    // Left parenthesis goes on stack
+                    operatorStack.push(token);
+                } else if (token === ')') {
+                    // Right parenthesis: pop until left parenthesis
+                    while (operatorStack.length > 0 && operatorStack[operatorStack.length - 1] !== '(') {
+                        output.push(operatorStack.pop());
+                    }
+                    operatorStack.pop(); // Remove the '('
+                } else if (operators[token]) {
+                    // Operator: pop operators with higher or equal precedence
+                    while (operatorStack.length > 0 && 
+                           operatorStack[operatorStack.length - 1] !== '(' &&
+                           shouldPopOperator(operatorStack[operatorStack.length - 1], token)) {
+                        output.push(operatorStack.pop());
+                    }
+                    operatorStack.push(token);
+                }
+            }
+            
+            // Pop remaining operators
+            while (operatorStack.length > 0) {
+                output.push(operatorStack.pop());
+            }
+            
+            return output;
+        }
+
+        // Determine if we should pop an operator from the stack
+        function shouldPopOperator(stackOp, currentOp) {
+            if (!operators[stackOp]) return false;
+            
+            const stackPrec = operators[stackOp].precedence;
+            const currentPrec = operators[currentOp].precedence;
+            
+            if (operators[currentOp].associativity === 'left') {
+                return stackPrec >= currentPrec;
+            } else {
+                return stackPrec > currentPrec;
+            }
+        }
+
+        // Evaluate postfix expression using a stack
+        function evaluatePostfix(postfix) {
+            const stack = [];
+            
+            for (let token of postfix) {
+                if (typeof token === 'number') {
+                    stack.push(token);
+                } else if (operators[token]) {
+                    if (stack.length < 2) return 'Error';
+                    
+                    const b = stack.pop();
+                    const a = stack.pop();
+                    let result;
+                    
+                    switch (token) {
+                        case '+':
+                            result = a + b;
+                            break;
+                        case '-':
+                            result = a - b;
+                            break;
+                        case '*':
+                            result = a * b;
+                            break;
+                        case '/':
+                            if (b === 0) return 'Error';
+                            result = a / b;
+                            break;
+                        case '^':
+                            result = Math.pow(a, b);
+                            break;
+                        default:
+                            return 'Error';
+                    }
+                    
+                    stack.push(result);
+                }
+            }
+            
+            return stack.length === 1 ? stack[0] : 'Error';
+        }
+
+        function square() {
+            const current = parseFloat(currentNumber);
+            if (!isNaN(current)) {
+                currentNumber = (current * current).toString();
+                updateDisplay();
+                waitingForNewNumber = false;
+            }
+        }
+
+        function squareRoot() {
+            const current = parseFloat(currentNumber);
+            if (isNaN(current) || current < 0) {
+                currentNumber = 'Error';
+            } else {
+                currentNumber = Math.sqrt(current).toString();
+            }
+            updateDisplay();
+            waitingForNewNumber = false;
+        }
+
+        function insertPi() {
+            currentNumber = Math.PI.toString();
+            updateDisplay();
+            clearOperatorDisplay();
+            waitingForNewNumber = false;
+        }
+
+        function percent() {
+            const current = parseFloat(currentNumber);
+            if (!isNaN(current)) {
+                currentNumber = (current / 100).toString();
+                updateDisplay();
+                waitingForNewNumber = false;
+            }
+        }
+
+        function toggleSign() {
+            if (currentNumber !== '0' && currentNumber !== 'Error') {
+                if (currentNumber.startsWith('-')) {
+                    currentNumber = currentNumber.substring(1);
+                } else {
+                    currentNumber = '-' + currentNumber;
+                }
+                updateDisplay();
+            }
+        }
+
+        function clearAll() {
+            currentNumber = '0';
+            expression = [];
+            waitingForNewNumber = false;
+            updateDisplay();
+            clearOperatorDisplay();
+        }
+
+        function clearEntry() {
+            currentNumber = '0';
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (currentNumber.length > 1 && currentNumber !== '0') {
+                currentNumber = currentNumber.slice(0, -1);
+            } else {
+                currentNumber = '0';
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            display.value = currentNumber;
+        }
+
+        function clearOperatorDisplay() {
+            operatorDisplay.textContent = '';
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(e) {
+            const key = e.key;
+            
+            if (key >= '0' && key <= '9') {
+                insertNumber(key);
+            } else if (key === '.') {
+                if (!currentNumber.includes('.')) {
+                    insertNumber(key);
+                }
+            } else if (key === '+') {
+                setOperator('+');
+            } else if (key === '-') {
+                setOperator('-');
+            } else if (key === '*') {
+                setOperator('*');
+            } else if (key === '/') {
+                e.preventDefault();
+                setOperator('/');
+            } else if (key === 'Enter' || key === '=') {
+                e.preventDefault();
+                calculate();
+            } else if (key === 'Escape') {
+                clearAll();
+            } else if (key === 'Backspace') {
+                backspace();
+            }
+        });
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
