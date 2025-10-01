@@ -1,4 +1,4 @@
-# Author: Troy Butler
+# Author: Troy Butler assisted by Claude
 
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
@@ -251,3 +251,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
