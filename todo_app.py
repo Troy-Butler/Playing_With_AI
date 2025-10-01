@@ -1,3 +1,5 @@
+# Author: Troy Butler
+
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 import json
@@ -247,4 +249,5 @@ def main():
     root.mainloop()
 
 if __name__ == "__main__":
+
     main()
